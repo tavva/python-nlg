@@ -8,6 +8,8 @@ import os.path
 from collections import namedtuple
 from collections import defaultdict
 
+import pynlg.morphology as morph
+
 DEFAULT_PATH = os.path.abspath("../../res/default-lexicon.xml")
 
 
@@ -19,14 +21,13 @@ class Word(object):
         self.features = features
         
 
-
 class Lexicon(object):
-    def __init__(self, morph_processor=None):
+    def __init__(self):
         self.words_by_id = {}
         self.words_by_base = defaultdict(list)
         self.words_by_category = defaultdict(list)
         self.words_by_variants = defaultdict(list)
-        self.morpher = morph_processor
+        
          
     def hasWord(self, word):
         return word in self.words_by_base.keys()
@@ -60,15 +61,14 @@ class Lexicon(object):
         return None
     
     def makeVariants(self, word_elem):
-        if not self.morpher is None:
-            for variant in self.morpher.makeVariants(word_elem):
-                self.words_by_variants[variant] = word_elem
+        for variant in morph.makeVariants(word_elem):
+            self.words_by_variants[variant].append(word_elem)
         
 
 class XMLLexicon(Lexicon):
     
-    def __init__(self, morph_processor = None, filename=None):
-        Lexicon.__init__(self, morph_processor)
+    def __init__(self, filename=None):
+        Lexicon.__init__(self)
         if filename is None:
             lex_tree = xml.etree.ElementTree.parse(DEFAULT_PATH)
         else:
@@ -84,7 +84,7 @@ class XMLLexicon(Lexicon):
             self.words_by_category[word_elem.category].append(word_elem)
             self.words_by_id[word_elem.id] = word_elem
             self.words_by_variants[word_elem.base].append(word_elem)
-            #self.makeVariants(word_elem)
+            self.makeVariants(word_elem)
         
     def makeWordElem(self, word):
         features = {}
@@ -106,9 +106,8 @@ class XMLLexicon(Lexicon):
         return Word(base, w_id, category, features)
     
     
-class SimpleMorpher(object):
-    def makeVariants(self, word):
-        if
+
+        
     
             
         
