@@ -1,0 +1,116 @@
+'''
+Created on Sep 11, 2011
+
+@author: Nich
+'''
+import xml.etree.ElementTree
+import os.path
+from collections import namedtuple
+from collections import defaultdict
+
+DEFAULT_PATH = os.path.abspath("../../res/default-lexicon.xml")
+
+
+class Word(object):
+    def __init__(self, base, id, category, features):
+        self.base = base
+        self.category = category
+        self.id = id
+        self.features = features
+        
+
+
+class Lexicon(object):
+    def __init__(self, morph_processor=None):
+        self.words_by_id = {}
+        self.words_by_base = defaultdict(list)
+        self.words_by_category = defaultdict(list)
+        self.words_by_variants = defaultdict(list)
+        self.morpher = morph_processor
+         
+    def hasWord(self, word):
+        return word in self.words_by_base.keys()
+    
+    def getWordByID(self, id):
+        return self.words_by_id[id]
+    
+    def getWords(self, word, word_cat = None):
+        words = self.words_by_base[word]
+        if not word_cat is None:
+            return [w for w in words if w.category == word_cat]
+        else:
+            return words
+        
+    def getWord(self, word, word_cat = None):
+        return self._getWordFromDict(self.words_by_base, word, word_cat)
+        
+    def getWordFromVariant(self, variant, word_cat):
+        return self._getWordFromDict(self.words_by_variants, variant, word_cat)
+    def _getWordFromDict(self, w_dict, word, word_cat):
+        words = w_dict[word]
+        if word_cat is None:
+            if len(words) == 1:
+                return words[0]
+            else:
+                return words
+        else:
+            for w in words:
+                if w.category == word_cat:
+                    return w
+        return None
+    
+    def makeVariants(self, word_elem):
+        if not self.morpher is None:
+            for variant in self.morpher.makeVariants(word_elem):
+                self.words_by_variants[variant] = word_elem
+        
+
+class XMLLexicon(Lexicon):
+    
+    def __init__(self, morph_processor = None, filename=None):
+        Lexicon.__init__(self, morph_processor)
+        if filename is None:
+            lex_tree = xml.etree.ElementTree.parse(DEFAULT_PATH)
+        else:
+            lex_tree = xml.etree.ElementTree.parse(filename)
+        
+        self.buildDicts(lex_tree)
+        
+    def buildDicts(self, lex_tree):
+        lex = lex_tree.getroot()
+        for word in lex.findall("word"):
+            word_elem = self.makeWordElem(word)
+            self.words_by_base[word_elem.base].append(word_elem)
+            self.words_by_category[word_elem.category].append(word_elem)
+            self.words_by_id[word_elem.id] = word_elem
+            self.words_by_variants[word_elem.base].append(word_elem)
+            #self.makeVariants(word_elem)
+        
+    def makeWordElem(self, word):
+        features = {}
+        base = None
+        w_id = None
+        category = None
+        for prop in list(word):
+            if prop.tag == "base":
+                base = prop.text.lower()
+            elif prop.tag == "id":
+                w_id = prop.text.upper()
+            elif prop.tag == "category":
+                category = prop.text.upper()
+            else:
+                if len(prop) == 0:
+                    features[prop.tag] = True
+                else:
+                    features[prop.tag] = prop.text
+        return Word(base, w_id, category, features)
+    
+    
+class SimpleMorpher(object):
+    def makeVariants(self, word):
+        if
+    
+            
+        
+        
+    
