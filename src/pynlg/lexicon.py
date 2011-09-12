@@ -14,11 +14,12 @@ DEFAULT_PATH = os.path.abspath("../../res/default-lexicon.xml")
 
 
 class Word(object):
-    def __init__(self, base, id, category, features):
+    def __init__(self, base, category, w_id = "E000000", features = None, inflections= None):
         self.base = base
         self.category = category
-        self.id = id
-        self.features = features
+        self.id = w_id
+        self.features = {} if features is None else features
+        self.inflections = {} if inflections is None else inflections
         
 
 class Lexicon(object):
@@ -63,7 +64,13 @@ class Lexicon(object):
     def makeVariants(self, word_elem):
         for variant in morph.makeVariants(word_elem):
             self.words_by_variants[variant].append(word_elem)
-        
+    
+    def makeInflections(self, word_elem):
+        inflections = morph.makeInflections(word_elem)
+        for key, value in inflections:
+            #add to variants list so we can search by it
+            self.words_by_variants[value] = word_elem
+            setattr(word_elem, "to_"+key, lambda k: word_elem.inflections[k])
 
 class XMLLexicon(Lexicon):
     
@@ -103,7 +110,7 @@ class XMLLexicon(Lexicon):
                     features[prop.tag] = True
                 else:
                     features[prop.tag] = prop.text
-        return Word(base, w_id, category, features)
+        return Word(base, category, w_id, features)
     
     
 
