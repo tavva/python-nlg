@@ -6,8 +6,26 @@ Created on Sep 11, 2011
 import unittest
 import pynlg.lexicon as lex
 
-class Test(unittest.TestCase):
+class TestWords(unittest.TestCase):
+    def setUp(self):
+        self.lexicon = lex.XMLLexicon()
+        self.abandon = self.lexicon.getWord("abandon", "VERB")
+        self.battle = self.lexicon.getWord("battle", "VERB")
+        self.bear = self.lexicon.getWord("bear", "VERB")
+        self.heal = self.lexicon.getWord("heal", "VERB")
+        self.linger = self.lexicon.getWord("linger", "VERB")
+        
+    def tearDown(self):
+        del self.lexicon
+    
+    def testVerbPastConversion(self):
+        self.assertEqual("abandoned", self.abandon.to_past())
+        self.assertEqual("battled", self.battle.to_past())
+        self.assertEqual("bore", self.bear.to_past())
+        self.assertEqual("healed", self.heal.to_past())
+        self.assertEqual("lingered", self.linger.to_past())
 
+class TestLexicon(unittest.TestCase):
 
     def setUp(self):
         self.lexicon = lex.XMLLexicon()
@@ -29,8 +47,8 @@ class Test(unittest.TestCase):
     
     def testGetWord_good(self):
         good = self.lexicon.getWord("good", "ADJECTIVE")
-        self.assertEqual("better", good.toComparative())
-        self.assertEqual("best", good.toSuperlative())
+        self.assertEqual("better", good.to_comparative())
+        self.assertEqual("best", good.to_superlative())
         self.assertTrue(good.hasFeature("QUALITATIVE"))
         self.assertTrue(good.hasFeature("PREDICATIVE"))
         self.assertFalse(good.hasFeature("COLOUR"))
@@ -45,7 +63,7 @@ class Test(unittest.TestCase):
     
     def testGetWord_sand(self):
         sand = self.lexicon.getWord("sand", "NOUN")
-        self.assertTrue(sand.hasInfVariant("UNCOUNT"))
+        self.assertTrue(sand.hasFeature("noncount"))
         
     def testHasWord_tree(self):
         self.assertTrue(self.lexicon.hasWord("tree"))
@@ -53,11 +71,11 @@ class Test(unittest.TestCase):
         
     def testGetWordByID_quickly(self):
         quickly = self.lexicon.getWordByID("E0051632")
-        self.assertEqual("quickly", quickly.baseForm())
-        self.assertEqual("ADVERB", quickly.getCategory())
-        self.assertTrue(quickly.hasFeature("VERB_MODIFIER"))
-        self.assertFalse(quickly.hasFeature("SENTENCE_MODIFIER"))
-        self.assertFalse(quickly.hasFeature("INTENSIFIER"))
+        self.assertEqual("quickly", quickly.base)
+        self.assertEqual("ADVERB", quickly.category)
+        self.assertTrue(quickly.hasFeature("verb_modifier"))
+        self.assertFalse(quickly.hasFeature("sentence_modifier"))
+        self.assertFalse(quickly.hasFeature("intensifier"))
     
     def testGetWordFromVariant_eating_eat(self):
         eat = self.lexicon.getWordFromVariant("eating")

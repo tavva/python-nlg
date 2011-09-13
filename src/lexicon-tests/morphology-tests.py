@@ -34,7 +34,7 @@ class NounTest(unittest.TestCase):
 class VerbTensesTest(unittest.TestCase):
     def setUp(self):
         self.walk = Word("walk", "VERB")
-        self.be = Word("is", "VERB", features = {"infinitive":"to be", "past":"was"})
+        self.be = Word("be", "VERB", features = {"present_participal":"being", "infinitive":"to be", "past":"was"})
         self.welcome = Word("welcome", "VERB")
         self.program = Word("program", "VERB")
         self.worry = Word("worry", "VERB")
@@ -57,6 +57,47 @@ class VerbTensesTest(unittest.TestCase):
         self.assertEqual("programmed", morph.verb_past(self.program))
         self.assertEqual("was", morph.verb_past(self.be))
         self.assertEqual("worried", morph.verb_past(self.worry))
+    
+    def testPresentParticiple(self):
+        morph = pynlg.morphology
+        self.assertEqual("walking", morph.verb_present_participal(self.walk))
+        self.assertEqual("welcoming", morph.verb_present_participal(self.welcome))
+        self.assertEqual("programming", morph.verb_present_participal(self.program))
+        self.assertEqual("being", morph.verb_present_participal(self.be))
+        self.assertEqual("worrying", morph.verb_present_participal(self.worry))
+        eat = Word("eat", "VERB")
+        self.assertEqual("eating", morph.verb_present_participal(eat))
+        
+class AdjectivesTests(unittest.TestCase):
+    
+    def setUp(self):
+        self.good = Word("good", "ADJECTIVE", features = {"superlative":"best", "comparative":"better"})
+        self.tall = Word("tall", "ADJECTIVE")
+        self.large = Word("large", "ADJECTIVE")
+        self.big = Word("big", "ADJECTIVE")
+        self.happy = Word("happy", "ADJECTIVE")
+        self.beautiful = Word("beautiful", "ADJECTIVE")
+        
+    def tearDown(self):
+        pass
+        
+    def testSuperlative(self):
+        morph = pynlg.morphology
+        self.assertEqual("best", morph.adj_superlative(self.good))
+        self.assertEqual("tallest", morph.adj_superlative(self.tall))
+        self.assertEqual("largest", morph.adj_superlative(self.large))
+        self.assertEqual("biggest", morph.adj_superlative(self.big))
+        self.assertEqual("happiest", morph.adj_superlative(self.happy))
+        self.assertEqual("most beautiful", morph.adj_superlative(self.beautiful))
+        
+    def testComparative(self):
+        morph = pynlg.morphology
+        self.assertEqual("better", morph.adj_comparative(self.good))
+        self.assertEqual("taller", morph.adj_comparative(self.tall))
+        self.assertEqual("larger", morph.adj_comparative(self.large))
+        self.assertEqual("bigger", morph.adj_comparative(self.big))
+        self.assertEqual("happier", morph.adj_comparative(self.happy))
+        self.assertEqual("more beautiful", morph.adj_comparative(self.beautiful))
         
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testNounPlural']

@@ -10,7 +10,7 @@ from collections import defaultdict
 
 import pynlg.morphology as morph
 
-DEFAULT_PATH = os.path.abspath("../../res/default-lexicon.xml")
+DEFAULT_PATH = os.path.abspath("/projects/Python-nlg/trunk/res/default-lexicon.xml")
 
 
 class Word(object):
@@ -20,7 +20,8 @@ class Word(object):
         self.id = w_id
         self.features = {} if features is None else features
         self.inflections = {} if inflections is None else inflections
-        
+    def hasFeature(self, key):
+        return key in self.features    
 
 class Lexicon(object):
     def __init__(self):
@@ -30,8 +31,18 @@ class Lexicon(object):
         self.words_by_variants = defaultdict(list)
         
          
-    def hasWord(self, word):
-        return word in self.words_by_base.keys()
+    def hasWord(self, word, word_cat = None):
+        if word in self.words_by_base.keys():
+            if word_cat == None:
+                return True
+            else:
+                for value in self.words_by_base[word]:
+                    if value.category == word_cat:
+                        return True
+                return False
+        
+        
+    
     
     def getWordByID(self, id):
         return self.words_by_id[id]
@@ -46,11 +57,13 @@ class Lexicon(object):
     def getWord(self, word, word_cat = None):
         return self._getWordFromDict(self.words_by_base, word, word_cat)
         
-    def getWordFromVariant(self, variant, word_cat):
+    def getWordFromVariant(self, variant, word_cat = None):
         return self._getWordFromDict(self.words_by_variants, variant, word_cat)
-    def _getWordFromDict(self, w_dict, word, word_cat):
+    def _getWordFromDict(self, w_dict, word, word_cat = None):
         words = w_dict[word]
         if word_cat is None:
+            if len(words) == 0:
+                return None
             if len(words) == 1:
                 return words[0]
             else:
@@ -67,10 +80,11 @@ class Lexicon(object):
     
     def makeInflections(self, word_elem):
         inflections = morph.makeInflections(word_elem)
-        for key, value in inflections:
+        for key, value in inflections.items():
             #add to variants list so we can search by it
-            self.words_by_variants[value] = word_elem
-            setattr(word_elem, "to_"+key, lambda k: word_elem.inflections[k])
+            self.words_by_variants[value].append(word_elem)
+            word_elem.inflections[key] = value
+            setattr(word_elem, "to_"+key, lambda: word_elem.inflections[key])
 
 class XMLLexicon(Lexicon):
     
@@ -91,7 +105,7 @@ class XMLLexicon(Lexicon):
             self.words_by_category[word_elem.category].append(word_elem)
             self.words_by_id[word_elem.id] = word_elem
             self.words_by_variants[word_elem.base].append(word_elem)
-            self.makeVariants(word_elem)
+            self.makeInflections(word_elem)
         
     def makeWordElem(self, word):
         features = {}
@@ -107,9 +121,9 @@ class XMLLexicon(Lexicon):
                 category = prop.text.upper()
             else:
                 if len(prop) == 0:
-                    features[prop.tag] = True
+                    features[prop.tag.lower()] = True
                 else:
-                    features[prop.tag] = prop.text
+                    features[prop.tag.lower()] = prop.text
         return Word(base, category, w_id, features)
     
     
