@@ -5,7 +5,6 @@ Created on Sep 11, 2011
 '''
 import xml.etree.ElementTree
 import os.path
-from collections import namedtuple
 from collections import defaultdict
 
 import pynlg.morphology as morph
@@ -43,9 +42,9 @@ class Lexicon(object):
                         return True
                 return False
         
-    def getWordByID(self, id):
-        if id in self.words_by_id:
-            return self.words_by_id[id]
+    def getWordByID(self, w_id):
+        if w_id in self.words_by_id:
+            return self.words_by_id[w_id]
         else:
             return None
     
