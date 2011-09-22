@@ -34,7 +34,7 @@ class NounTest(unittest.TestCase):
 class VerbTensesTest(unittest.TestCase):
     def setUp(self):
         self.walk = Word("walk", "VERB")
-        self.be = Word("be", "VERB", features = {"present_participal":"being", "infinitive":"to be", "past":"was"})
+        self.be = Word("be", "VERB", features = {"present":"is", "presentparticiple":"being", "infinitive":"to be", "past":"was"})
         self.welcome = Word("welcome", "VERB")
         self.program = Word("program", "VERB")
         self.worry = Word("worry", "VERB")
@@ -50,6 +50,14 @@ class VerbTensesTest(unittest.TestCase):
         self.assertEqual("to be", morph.verb_inf(self.be))
         self.assertEqual("to worry", morph.verb_inf(self.worry))
         
+    def testPresent(self):
+        morph = pynlg.morphology
+        self.assertEqual("walks", morph.verb_present(self.walk))
+        self.assertEqual("welcomes", morph.verb_present(self.welcome))
+        self.assertEqual("programs", morph.verb_present(self.program))
+        self.assertEqual("is", morph.verb_present(self.be))
+        self.assertEqual("worries", morph.verb_present(self.worry))
+        
     def testPast(self):
         morph = pynlg.morphology
         self.assertEqual("walked", morph.verb_past(self.walk))
@@ -60,13 +68,13 @@ class VerbTensesTest(unittest.TestCase):
     
     def testPresentParticiple(self):
         morph = pynlg.morphology
-        self.assertEqual("walking", morph.verb_present_participal(self.walk))
-        self.assertEqual("welcoming", morph.verb_present_participal(self.welcome))
-        self.assertEqual("programming", morph.verb_present_participal(self.program))
-        self.assertEqual("being", morph.verb_present_participal(self.be))
-        self.assertEqual("worrying", morph.verb_present_participal(self.worry))
+        self.assertEqual("walking", morph.verb_present_participle(self.walk))
+        self.assertEqual("welcoming", morph.verb_present_participle(self.welcome))
+        self.assertEqual("programming", morph.verb_present_participle(self.program))
+        self.assertEqual("being", morph.verb_present_participle(self.be))
+        self.assertEqual("worrying", morph.verb_present_participle(self.worry))
         eat = Word("eat", "VERB")
-        self.assertEqual("eating", morph.verb_present_participal(eat))
+        self.assertEqual("eating", morph.verb_present_participle(eat))
         
 class AdjectivesTests(unittest.TestCase):
     

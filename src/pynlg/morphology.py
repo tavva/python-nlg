@@ -18,10 +18,15 @@ def makeInflections(word):
         inflections["plural"] = noun_plural(word)
     if word.category == "VERB":
         inflections["infinitive"] = verb_inf(word)
+        inflections["present"] = verb_present(word)
         inflections["past"] = verb_past(word)
+        inflections["present_participle"] = verb_present_participle(word)
+        inflections["past_participle"] = verb_past_participle(word)
     if word.category == "ADJECTIVE":
         inflections["superlative"] = adj_superlative(word)
         inflections["comparative"] = adj_comparative(word)
+    if word.category == "MODAL":
+        inflections["past"] = verb_past(word)
     return inflections
     
 def noun_plural(word):
@@ -43,6 +48,18 @@ def verb_inf(word):
     else:
         return 'to '+word.base
 
+def verb_present(word):
+    if "present" in word.features:
+        return word.features["present"]
+    else:
+        base = word.base
+        if base[-2:] == "ss" or base[-2:] == "sh" or base[-2:] == "ch" or base[-1:] == "o":
+            return base + "es"
+        elif base[-1:] == "y":
+            return base[:-1] + "ies"
+        else:
+            return base + "s"
+
 def verb_past(word):
     if "past" in word.features:
         return word.features["past"]
@@ -50,16 +67,16 @@ def verb_past(word):
         base = word.base
         if base[-1] == "e":
             return base+"d"
-        if base[-1] in ('b', 'd', 'f', 'g', 'l', 'm', 'n', 'p', 's', 't', 'z'):
+        if base[-1] in ('b', 'd', 'f', 'g', 'l', 'm', 'p', 's', 't', 'z') and not base[-3:-1] in double_vowels:
             return base+base[-1]+"ed"
         if base[-1] == 'y':
             return base[:-1]+"ied"
         else:
             return base+"ed"
 
-def verb_present_participal(word):
-    if "present_participal" in word.features:
-        return word.features["present_participal"]
+def verb_present_participle(word):
+    if "presentparticiple" in word.features:
+        return word.features["presentparticiple"]
     else:
         base = word.base
         if base[-1] == "e":
@@ -70,6 +87,20 @@ def verb_present_participal(word):
             return base+"ing"
         else:
             return base+"ing"
+
+def verb_past_participle(word):
+    if "pastparticiple" in word.features:
+        return word.features["pastparticiple"]
+    else:
+        base = word.base
+        if base[-1] == "e":
+            return base[:-1]+"ed"
+        if base[-1] in ('b', 'd', 'f', 'g', 'l', 'm', 'n', 'p', 's', 't', 'z') and not base[-3:-1] in double_vowels:
+            return base+base[-1]+"ed"
+        if base[-1] == 'y':
+            return base+"ed"
+        else:
+            return base+"ed"
         
         
 def adj_comparative(word):

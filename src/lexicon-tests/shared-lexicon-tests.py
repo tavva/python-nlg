@@ -19,11 +19,11 @@ class TestWords(unittest.TestCase):
         del self.lexicon
     
     def testVerbPastConversion(self):
-        self.assertEqual("abandoned", self.abandon.to_past())
-        self.assertEqual("battled", self.battle.to_past())
-        self.assertEqual("bore", self.bear.to_past())
-        self.assertEqual("healed", self.heal.to_past())
-        self.assertEqual("lingered", self.linger.to_past())
+        self.assertEqual("abandoned", self.abandon.past)
+        self.assertEqual("battled", self.battle.past)
+        self.assertEqual("bore", self.bear.past)
+        self.assertEqual("healed", self.heal.past)
+        self.assertEqual("lingered", self.linger.past)
 
 class TestLexicon(unittest.TestCase):
 
@@ -47,19 +47,18 @@ class TestLexicon(unittest.TestCase):
     
     def testGetWord_good(self):
         good = self.lexicon.getWord("good", "ADJECTIVE")
-        self.assertEqual("better", good.to_comparative())
-        self.assertEqual("best", good.to_superlative())
-        self.assertTrue(good.hasFeature("QUALITATIVE"))
-        self.assertTrue(good.hasFeature("PREDICATIVE"))
-        self.assertFalse(good.hasFeature("COLOUR"))
-        self.assertFalse(good.hasFeature("CLASSIFYING"))
+        self.assertEqual("better", good.comparative)
+        self.assertEqual("best", good.superlative)
+        self.assertTrue(good.hasFeature("qualitative"))
+        self.assertTrue(good.hasFeature("predicative"))
+        self.assertFalse(good.hasFeature("colour"))
+        self.assertFalse(good.hasFeature("classifying"))
     
     def testGetWord_woman(self):
         woman = self.lexicon.getWord("woman")
-        self.assertEqual("women", woman.plural())
-        self.assertEqual(None, woman.acronymOf())
+        self.assertEqual("women", woman.plural)
         self.assertFalse(woman.hasFeature("PROPER"))
-        self.assertFalse(woman.hasInfVariant("UNCOUNT"))
+        self.assertFalse(woman.hasInflection("UNCOUNT"))
     
     def testGetWord_sand(self):
         sand = self.lexicon.getWord("sand", "NOUN")
@@ -80,26 +79,28 @@ class TestLexicon(unittest.TestCase):
     def testGetWordFromVariant_eating_eat(self):
         eat = self.lexicon.getWordFromVariant("eating")
         self.assertEqual("eat", eat.base)
-        self.assertTrue(eat.hasFeature("TRANSITIVE"))
-        self.assertTrue(eat.hasFeature("INTRANSITIVE"))
-        self.assertFalse(eat.hasFeature("DITRANSITIVE"))
+        self.assertTrue(eat.hasFeature("transitive"))
+        self.assertTrue(eat.hasFeature("intransitive"))
+        self.assertFalse(eat.hasFeature("ditransitive"))
         
     def test_BE(self):
         be = self.lexicon.getWordFromVariant("is", "VERB")
-        self.assertEqual("been", be.toPastParticiple())
+        self.assertEqual("be", be.base)
+        self.assertEqual("is", be.present)
+        self.assertEqual("been", be.past_participle)
         
     def testModal(self):
         can = self.lexicon.getWord('can', 'MODAL')
-        self.assertEqual("could", can.toPast())
+        self.assertEqual("could", can.past)
     
     def testNonExistantWord(self):
         self.assertFalse(self.lexicon.hasWord("Quijubie"))
         self.assertEquals(0, len(self.lexicon.getWords("Quijubie")))
         
     def testLookup(self):
-        self.assertEqual("say", lexicon.lookup("say", "VERB").base)
-        self.assertEqual("say", lexicon.lookup("said", "VERB").base)
-        self.assertEqual("say", lexicon.lookup("E0054448").base)
+        self.assertEqual("say", self.lexicon.lookup("say", "VERB").base)
+        self.assertEqual("say", self.lexicon.lookup("said", "VERB").base)
+        self.assertEqual("say", self.lexicon.lookup("E0054448").base)
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

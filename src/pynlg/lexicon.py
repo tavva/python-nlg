@@ -21,7 +21,9 @@ class Word(object):
         self.features = {} if features is None else features
         self.inflections = {} if inflections is None else inflections
     def hasFeature(self, key):
-        return key in self.features    
+        return key.lower() in self.features  
+    def hasInflection(self, key):
+        return key.lower() in self.inflections  
 
 class Lexicon(object):
     def __init__(self):
@@ -41,11 +43,11 @@ class Lexicon(object):
                         return True
                 return False
         
-        
-    
-    
     def getWordByID(self, id):
-        return self.words_by_id[id]
+        if id in self.words_by_id:
+            return self.words_by_id[id]
+        else:
+            return None
     
     def getWords(self, word, word_cat = None):
         words = self.words_by_base[word]
@@ -59,6 +61,7 @@ class Lexicon(object):
         
     def getWordFromVariant(self, variant, word_cat = None):
         return self._getWordFromDict(self.words_by_variants, variant, word_cat)
+    
     def _getWordFromDict(self, w_dict, word, word_cat = None):
         words = w_dict[word]
         if word_cat is None:
@@ -83,8 +86,20 @@ class Lexicon(object):
         for key, value in inflections.items():
             #add to variants list so we can search by it
             self.words_by_variants[value].append(word_elem)
+            #and add it to the word itself
             word_elem.inflections[key] = value
-            setattr(word_elem, "to_"+key, lambda: word_elem.inflections[key])
+            #finally, add it as an attribute
+            setattr(word_elem, key.lower(), value)
+            
+    def lookup(self, word, word_cat = None):
+        if not self.getWordByID(word) is None:
+            return self.getWordByID(word)
+        if not self.getWord(word, word_cat) is None:
+            return self.getWord(word, word_cat)
+        if not self.getWordFromVariant(word, word_cat) is None:
+            return self.getWordFromVariant(word, word_cat)
+        
+    
 
 class XMLLexicon(Lexicon):
     
@@ -120,7 +135,7 @@ class XMLLexicon(Lexicon):
             elif prop.tag == "category":
                 category = prop.text.upper()
             else:
-                if len(prop) == 0:
+                if prop.text is None:
                     features[prop.tag.lower()] = True
                 else:
                     features[prop.tag.lower()] = prop.text
@@ -128,7 +143,16 @@ class XMLLexicon(Lexicon):
     
     
 
-        
+if __name__ == "__main__":
+    lex = XMLLexicon("C:/projects/Python-nlg/trunk/res/TestLexicon.xml")
+    be = lex.getWord("be")
+    print(be.base)
+    print(be.id)
+    print(be.category)
+    print(be.features)
+    print(be.inflections)
+    
+           
     
             
         
