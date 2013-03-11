@@ -17985,6 +17985,12 @@
   <id>E0420892</id>
 </word>
 <word>
+  <base>john</base>
+  <category>noun</category>
+  <id>E0000000</id>
+  <proper/>
+</word>
+<word>
   <base>join</base>
   <category>verb</category>
   <id>E0036228</id>

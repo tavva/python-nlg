@@ -38,6 +38,7 @@ class VerbTensesTest(unittest.TestCase):
         self.welcome = Word("welcome", "VERB")
         self.program = Word("program", "VERB")
         self.worry = Word("worry", "VERB")
+        self.kiss = Word("kiss", "VERB")
         
     def tearDown(self):
         pass
@@ -49,6 +50,7 @@ class VerbTensesTest(unittest.TestCase):
         self.assertEqual("to program", morph.verb_inf(self.program))
         self.assertEqual("to be", morph.verb_inf(self.be))
         self.assertEqual("to worry", morph.verb_inf(self.worry))
+        self.assertEqual("to kiss", morph.verb_inf(self.kiss))
         
     def testPresent(self):
         morph = pynlg.morphology
@@ -57,6 +59,7 @@ class VerbTensesTest(unittest.TestCase):
         self.assertEqual("programs", morph.verb_present(self.program))
         self.assertEqual("is", morph.verb_present(self.be))
         self.assertEqual("worries", morph.verb_present(self.worry))
+        self.assertEqual("kisses", morph.verb_present(self.kiss))
         
     def testPast(self):
         morph = pynlg.morphology
@@ -65,6 +68,7 @@ class VerbTensesTest(unittest.TestCase):
         self.assertEqual("programmed", morph.verb_past(self.program))
         self.assertEqual("was", morph.verb_past(self.be))
         self.assertEqual("worried", morph.verb_past(self.worry))
+        self.assertEqual("kissed", morph.verb_past(self.kiss))
     
     def testPresentParticiple(self):
         morph = pynlg.morphology
@@ -73,6 +77,7 @@ class VerbTensesTest(unittest.TestCase):
         self.assertEqual("programming", morph.verb_present_participle(self.program))
         self.assertEqual("being", morph.verb_present_participle(self.be))
         self.assertEqual("worrying", morph.verb_present_participle(self.worry))
+        self.assertEqual("kissing", morph.verb_present_participle(self.kiss))
         eat = Word("eat", "VERB")
         self.assertEqual("eating", morph.verb_present_participle(eat))
         

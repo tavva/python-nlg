@@ -9,10 +9,10 @@ from collections import defaultdict
 
 import pynlg.morphology as morph
 
-DEFAULT_PATH = os.path.abspath("/projects/Python-nlg/trunk/res/default-lexicon.xml")
+DEFAULT_PATH = os.path.abspath("/projects/Python-nlg/res/default-lexicon.xml")
 
 
-class Word(object):
+class Word():
     def __init__(self, base, category, w_id = "E000000", features = None, inflections= None):
         self.base = base
         self.category = category
@@ -24,7 +24,36 @@ class Word(object):
     def hasInflection(self, key):
         return key.lower() in self.inflections  
 
-class Lexicon(object):
+class Verb(Word):
+    def tense(self, tense):
+        return self.inflections[tense]
+
+    
+class Adjective(Word):
+    pass
+
+class Noun(Word):
+    def __init__(self, base, w_id = "E000000", features = None, inflections = None):
+        super().__init__(base, category = "NOUN", w_id = w_id, features = features, inflections = inflections)
+    
+    def plural(self):
+        return self.plural
+    
+    def __str__(self):
+        if self.hasFeature("proper"):
+            return self.base.capitalize()
+        return self.base
+
+class Determiner(Word):
+    def __str__(self):
+        return self.base  
+
+class Modal(Word):
+    def __str__(self):
+        return self.base
+
+
+class Lexicon():
     def __init__(self):
         self.words_by_id = {}
         self.words_by_base = defaultdict(list)
@@ -56,7 +85,12 @@ class Lexicon(object):
             return words
         
     def getWord(self, word, word_cat = None):
-        return self._getWordFromDict(self.words_by_base, word, word_cat)
+        retr_word = self.getWords(word, word_cat)
+        if len(retr_word) == 0:
+            raise Exception("The word '"+word+"' was not found in the current lexicon. You will need to define it and its features manually or add it to the lexicon.")
+        if len(retr_word) > 1:
+            raise Exception("The word '"+word+"' is ambiguous, and could be one of the following categories: "+", ".join([w.category for w in retr_word])+". Specify a category or use 'getWords()' to retrieve a list")        
+        return retr_word[0]
         
     def getWordFromVariant(self, variant, word_cat = None):
         return self._getWordFromDict(self.words_by_variants, variant, word_cat)
@@ -93,7 +127,7 @@ class Lexicon(object):
     def lookup(self, word, word_cat = None):
         if not self.getWordByID(word) is None:
             return self.getWordByID(word)
-        if not self.getWord(word, word_cat) is None:
+        if not len(self.getWords(word, word_cat)) == 0:
             return self.getWord(word, word_cat)
         if not self.getWordFromVariant(word, word_cat) is None:
             return self.getWordFromVariant(word, word_cat)
@@ -138,12 +172,24 @@ class XMLLexicon(Lexicon):
                     features[prop.tag.lower()] = True
                 else:
                     features[prop.tag.lower()] = prop.text
-        return Word(base, category, w_id, features)
+                    
+        if category == "VERB":
+            return Verb(base, category, w_id, features)
+        elif category == "ADJECTIVE":
+            return Adjective(base, category, w_id, features)
+        elif category == "DETERMINER":
+            return Determiner(base, category, w_id, features)
+        elif category == "NOUN":
+            return Noun(base, w_id=w_id, features=features)
+        elif category == "MODAL":
+            return Modal(base, category, w_id, features)
+        else:
+            return Word(base, category, w_id, features)
     
     
 
 if __name__ == "__main__":
-    lex = XMLLexicon("C:/projects/Python-nlg/trunk/res/TestLexicon.xml")
+    lex = XMLLexicon("C:/projects/Python-nlg/res/TestLexicon.xml")
     be = lex.getWord("be")
     print(be.base)
     print(be.id)

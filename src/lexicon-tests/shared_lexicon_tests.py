@@ -38,10 +38,14 @@ class TestLexicon(unittest.TestCase):
         self.assertEqual("abandon", abandon.base)
         self.assertEqual("VERB", abandon.category)
         self.assertEqual("E0006429", abandon.id)
+        self.assertTrue(isinstance(abandon, lex.Verb))
+        
         
     def testGetWords(self):
         #"Can" has 3 possible values, a verb, a noun, and a modal
         self.assertEqual(3, len(self.lexicon.getWords("can")))
+        self.assertEqual(set(["NOUN", "VERB", "MODAL"]), set([w.category for w in self.lexicon.getWords("can")]))
+        self.assertEqual(set([lex.Noun, lex.Verb, lex.Modal]), set([type(w) for w in self.lexicon.getWords("can")]))
         self.assertEqual(1, len(self.lexicon.getWords("can", "NOUN")))
         self.assertEqual(0, len(self.lexicon.getWords("can", "ADJECTIVE")))
     
@@ -96,6 +100,7 @@ class TestLexicon(unittest.TestCase):
     def testNonExistantWord(self):
         self.assertFalse(self.lexicon.hasWord("Quijubie"))
         self.assertEquals(0, len(self.lexicon.getWords("Quijubie")))
+        self.assertRaises(Exception, self.lexicon.getWord, ("Quijubie"))
         
     def testLookup(self):
         self.assertEqual("say", self.lexicon.lookup("say", "VERB").base)

@@ -16,6 +16,8 @@ def makeInflections(word):
     if word.category == "NOUN":
         #do plural
         inflections["plural"] = noun_plural(word)
+        
+        
     if word.category == "VERB":
         inflections["infinitive"] = verb_inf(word)
         inflections["present"] = verb_present(word)
@@ -28,6 +30,7 @@ def makeInflections(word):
     if word.category == "MODAL":
         inflections["past"] = verb_past(word)
     return inflections
+
     
 def noun_plural(word):
     base = word.base
@@ -41,6 +44,8 @@ def noun_plural(word):
         return base[:-1] + "ies"
     else:
         return base + "s"
+    
+
 
 def verb_inf(word):
     if "infinitive" in word.features:
@@ -67,7 +72,7 @@ def verb_past(word):
         base = word.base
         if base[-1] == "e":
             return base+"d"
-        if base[-1] in ('b', 'd', 'f', 'g', 'l', 'm', 'p', 's', 't', 'z') and not base[-3:-1] in double_vowels:
+        if base[-1] in ('b', 'd', 'f', 'g', 'l', 'm', 'p', 's', 't', 'z') and not base[-3:-1] in double_vowels and not base[-2:] == "ss":
             return base+base[-1]+"ed"
         if base[-1] == 'y':
             return base[:-1]+"ied"
@@ -81,7 +86,7 @@ def verb_present_participle(word):
         base = word.base
         if base[-1] == "e":
             return base[:-1]+"ing"
-        if base[-1] in ('b', 'd', 'f', 'g', 'l', 'm', 'n', 'p', 's', 't', 'z') and not base[-3:-1] in double_vowels:
+        if base[-1] in ('b', 'd', 'f', 'g', 'l', 'm', 'n', 'p', 's', 't', 'z') and not base[-3:-1] in double_vowels and not base[-2:] == "ss":
             return base+base[-1]+"ing"
         if base[-1] == 'y':
             return base+"ing"
