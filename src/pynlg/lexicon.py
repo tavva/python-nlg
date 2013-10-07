@@ -22,7 +22,9 @@ class Word():
     def hasFeature(self, key):
         return key.lower() in self.features  
     def hasInflection(self, key):
-        return key.lower() in self.inflections  
+        return key.lower() in self.inflections
+    def __str__(self):
+        return self.base  
 
 class Verb(Word):
     def tense(self, tense):
@@ -30,7 +32,8 @@ class Verb(Word):
 
     
 class Adjective(Word):
-    pass
+    def __str__(self):
+        return self.base
 
 class Noun(Word):
     def __init__(self, base, w_id = "E000000", features = None, inflections = None):

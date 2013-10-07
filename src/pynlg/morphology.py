@@ -24,6 +24,8 @@ def makeInflections(word):
         inflections["past"] = verb_past(word)
         inflections["present_participle"] = verb_present_participle(word)
         inflections["past_participle"] = verb_past_participle(word)
+        inflections["present_progressive"] = verb_present_progressive(word)
+        inflections["past_progressive"] = verb_past_progressive(word)
     if word.category == "ADJECTIVE":
         inflections["superlative"] = adj_superlative(word)
         inflections["comparative"] = adj_comparative(word)
@@ -64,6 +66,8 @@ def verb_present(word):
             return base[:-1] + "ies"
         else:
             return base + "s"
+
+
 
 def verb_past(word):
     if "past" in word.features:
@@ -106,6 +110,20 @@ def verb_past_participle(word):
             return base+"ed"
         else:
             return base+"ed"
+
+def verb_present_progressive(word):
+    if "presentprogressive" in word.features:
+        return word.features["presentprogressive"]
+    else:
+        return "is "+verb_present_participle(word)
+    
+def verb_past_progressive(word):
+    if "pastprogressive" in word.features:
+        return word.features["pastprogressive"]
+    else:
+        return "was "+verb_present_participle(word)
+        
+    
         
         
 def adj_comparative(word):

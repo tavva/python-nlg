@@ -3,6 +3,8 @@ Created on Sep 12, 2011
 
 @author: Nich
 '''
+
+
 import unittest
 import pynlg.morphology
 from pynlg.lexicon import Word
@@ -80,6 +82,25 @@ class VerbTensesTest(unittest.TestCase):
         self.assertEqual("kissing", morph.verb_present_participle(self.kiss))
         eat = Word("eat", "VERB")
         self.assertEqual("eating", morph.verb_present_participle(eat))
+        
+    def testPresentProgressive(self):
+        morph = pynlg.morphology
+        self.assertEqual("is walking", morph.verb_present_progressive(self.walk))
+        self.assertEqual("is welcoming", morph.verb_present_progressive(self.welcome))
+        self.assertEqual("is programming", morph.verb_present_progressive(self.program))
+        self.assertEqual("is being", morph.verb_present_progressive(self.be))
+        self.assertEqual("is worrying", morph.verb_present_progressive(self.worry))
+        
+        
+    def testPastProgressive(self):
+        morph = pynlg.morphology
+        self.assertEqual("was walking", morph.verb_past_progressive(self.walk))
+        self.assertEqual("was welcoming", morph.verb_past_progressive(self.welcome))
+        self.assertEqual("was programming", morph.verb_past_progressive(self.program))
+        self.assertEqual("was being", morph.verb_past_progressive(self.be))
+        self.assertEqual("was worrying", morph.verb_past_progressive(self.worry))
+        
+        
         
 class AdjectivesTests(unittest.TestCase):
     
