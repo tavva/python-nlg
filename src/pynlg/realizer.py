@@ -213,8 +213,10 @@ class Clause():
     def add_subject(self, subject, position=None):
         np_subject = NounPhrase.wrap_noun_in_np(subject)
         
-        #TODO: Currently ignores position
-        self.subject.append(np_subject)
+        if position is None:
+            position = len(self.subject)
+        
+        self.subject.insert(position, np_subject)
         
         return np_subject
         
