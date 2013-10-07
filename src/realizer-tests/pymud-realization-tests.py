@@ -25,11 +25,14 @@ class Test(unittest.TestCase):
         
         self.np_a_young_girl_with_red_hair_and_glasses = NounPhrase.from_nounphrase(self.np_a_young_girl, prepositional_phrases = [self.pp_with_red_hair_and_glasses])
         
-        self.is_sitting = VerbPhrase(lex.getWord("sit"), tense="present_progressive")
+        self.vp_is_sitting = VerbPhrase(lex.getWord("sit"), tense="present_progressive")
         
-        self.np_a_young_girl_with_red_hair_and_glasses_is_sitting  = Phrase.create_np_vp_phrase(self.np_a_young_girl_with_red_hair_and_glasses, self.is_sitting)
+        self.vp_is_sitting_by_the_fire = VerbPhrase(lex.getWord("sit"), tense="present_progressive", prepositional_phrases = [self.pp_by_the_fire])
         
-        self.np_a_young_girl_with_red_hair_and_glasses_is_sitting  = Phrase.create_np_vp_phrase(self.np_a_young_girl_with_red_hair_and_glasses, self.is_sitting) 
+        self.np_a_young_girl_with_red_hair_and_glasses_is_sitting  = Phrase.create_np_vp_phrase(self.np_a_young_girl_with_red_hair_and_glasses, self.vp_is_sitting)
+        
+        
+        self.np_a_young_girl_with_red_hair_and_glasses_is_sitting_by_the_fire  = Phrase.create_np_vp_phrase(self.np_a_young_girl_with_red_hair_and_glasses, self.vp_is_sitting_by_the_fire) 
         
         
         
@@ -48,6 +51,12 @@ class Test(unittest.TestCase):
     def testYoungGirlWithRedHairAndGlassesIsSitting(self):
         self.assertEqual("a young girl with red hair and glasses is sitting", self.np_a_young_girl_with_red_hair_and_glasses_is_sitting.realize())
     
+    def testByTheFire(self):
+        self.assertEqual("by the fire", self.pp_by_the_fire.realize())
+        
+    def testYoungGirlWithRedHairAndGlassesIsSittingByTheFire(self):
+        self.assertEqual("a young girl with red hair and glasses is sitting by the fire", self.np_a_young_girl_with_red_hair_and_glasses_is_sitting_by_the_fire.realize())
+        
         
     def tearDown(self):
         pass

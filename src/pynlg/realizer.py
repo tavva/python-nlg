@@ -115,17 +115,21 @@ class NounPhrase():
             
         np.append(str(self.base_word))
         if len(self.prepositional_phrases) > 0:
-            #TODO Error: Only the first PP counts. LOL, good joke Nicholas
-            np.append(self.prepositional_phrases[0].realize())
+            realized_pps = []
+            for pp in self.prepositional_phrases:
+                #TODO Error: Only the first PP counts. LOL, good joke Nicholas
+                realized_pps.append(pp.realize())
+            np.append(" ".join(realized_pps))
         return " ".join(np)
     
 class VerbPhrase():
-    def __init__(self, verb, adverbs=None, direct_object=None, indirect_object=None, tense = "present"):
+    def __init__(self, verb, adverbs=None, direct_object=None, indirect_object=None, tense = "present", prepositional_phrases=None):
         self.verb = verb
         self.adverbs = [] if adverbs == None else adverbs
         self.direct_object = direct_object
         self.indirect_object = indirect_object
         self.tense = tense
+        self.prepositional_phrases = [] if prepositional_phrases == None else prepositional_phrases
     
     def set_tense(self, tense):
         self.tense = tense
@@ -156,6 +160,12 @@ class VerbPhrase():
         
         if not self.direct_object is None:
             vp.append(self.direct_object.realize())
+        if len(self.prepositional_phrases) > 0:
+            realized_pps = []
+            for pp in self.prepositional_phrases:
+                #TODO Error: Only the first PP counts. LOL, good joke Nicholas
+                realized_pps.append(pp.realize())
+            vp.append(" ".join(realized_pps))
         
         return " ".join(vp)
 
