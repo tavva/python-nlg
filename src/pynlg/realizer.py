@@ -117,7 +117,7 @@ class NounPhrase():
         if len(self.prepositional_phrases) > 0:
             realized_pps = []
             for pp in self.prepositional_phrases:
-                #TODO Error: Only the first PP counts. LOL, good joke Nicholas
+                
                 realized_pps.append(pp.realize())
             np.append(" ".join(realized_pps))
         return " ".join(np)
@@ -163,7 +163,7 @@ class VerbPhrase():
         if len(self.prepositional_phrases) > 0:
             realized_pps = []
             for pp in self.prepositional_phrases:
-                #TODO Error: Only the first PP counts. LOL, good joke Nicholas
+                
                 realized_pps.append(pp.realize())
             vp.append(" ".join(realized_pps))
         
@@ -215,7 +215,7 @@ class Clause():
         
         if position is None:
             position = len(self.subject)
-        
+            
         self.subject.insert(position, np_subject)
         
         return np_subject
