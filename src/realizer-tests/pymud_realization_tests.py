@@ -4,7 +4,7 @@ Created on 2013-04-01
 @author: Nich
 '''
 import unittest
-from pynlg.realizer import Clause, NounPhrase, PrepositionalPhrase, VerbPhrase, Phrase
+from pynlg.realizer import Clause, NounPhrase, PrepositionalPhrase, VerbPhrase
 from pynlg.lexicon import Word, XMLLexicon, Noun, Determiner, Adjective
 
 class Test(unittest.TestCase):
@@ -29,10 +29,10 @@ class Test(unittest.TestCase):
         
         self.vp_is_sitting_by_the_fire = VerbPhrase(lex.getWord("sit"), tense="present_progressive", prepositional_phrases = [self.pp_by_the_fire])
         
-        self.np_a_young_girl_with_red_hair_and_glasses_is_sitting  = Phrase.create_np_vp_phrase(self.np_a_young_girl_with_red_hair_and_glasses, self.vp_is_sitting)
+        self.np_a_young_girl_with_red_hair_and_glasses_is_sitting  = Clause(self.np_a_young_girl_with_red_hair_and_glasses, self.vp_is_sitting)
         
         
-        self.np_a_young_girl_with_red_hair_and_glasses_is_sitting_by_the_fire  = Phrase.create_np_vp_phrase(self.np_a_young_girl_with_red_hair_and_glasses, self.vp_is_sitting_by_the_fire) 
+        self.np_a_young_girl_with_red_hair_and_glasses_is_sitting_by_the_fire  = Clause(self.np_a_young_girl_with_red_hair_and_glasses, self.vp_is_sitting_by_the_fire) 
         
         
         

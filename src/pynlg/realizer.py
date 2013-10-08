@@ -7,25 +7,57 @@ Created on 2013-03-06
 from pynlg.lexicon import Noun, Determiner, Word
 
 
-class Phrase():
-    #for now, handle the NP VP case, but leave open for more cases
-    def __init__(self, phrase_parts=None):
-        self.phrase_parts =   [] if phrase_parts is None else phrase_parts
+
+class Clause():
     
-    @classmethod
-    def create_np_vp_phrase(cls, np, vp):
-        return cls([np, vp])
-    
-    def realize(self):
-        phrase_parts = []
+    def __init__(self, subject = None, verb = None, object = None,):
+        if subject is None:
+            self.subject = []
+        elif isinstance(subject, NounPhrase):
+            self.subject = [subject]
+        else:
+            self.subject = subject
+        
+        if verb is None:
+            self.verb = []
+        elif isinstance(verb, VerbPhrase):
+            self.verb = [verb]
+        else:
+            self.verb = verb
+        
+        if object is None:
+            self.object = []
+        elif isinstance(object, NounPhrase):
+            self.object = [object]
+        else:
+            self.object = object
         
         
-        for pp in self.phrase_parts:
-            phrase_parts.append(pp.realize())
+
+    def add_subject(self, subject, position=None):
+        np_subject = NounPhrase.wrap_noun_in_np(subject)
         
-        result = " ".join(phrase_parts)
+        if position is None:
+            position = len(self.subject)
             
-        return result
+        self.subject.insert(position, np_subject)
+        
+        return np_subject
+        
+    def add_verb(self, verb, position=None):
+        vp_verb = VerbPhrase.wrap_verb_in_vp(verb)
+        self.verb.append(vp_verb)
+        return vp_verb
+        
+   
+    def set_verb_tense(self, tense):
+        for vp in self.verb:
+            vp.set_tense(tense)
+        
+    def realize(self):
+        return " ".join([self.subject[0].realize(), self.verb[0].realize()]) 
+
+
         
         
 
@@ -95,7 +127,6 @@ class NounPhrase():
             return base+"'"
         
         return base +"'s"
-        
         
     def realize(self):
         np = []
@@ -201,35 +232,5 @@ class PrepositionalPhrase():
         
        
     
-class Clause():
-    
-    def __init__(self, subject = None, verb = None, object = None, verbtense = "present"):
-        self.subject = [] if subject is None else subject
-        self.verb = [] if verb is None else verb
-        self.object = [] if object is None else object
-        self.verbtense = verbtense
-        
 
-    def add_subject(self, subject, position=None):
-        np_subject = NounPhrase.wrap_noun_in_np(subject)
-        
-        if position is None:
-            position = len(self.subject)
-            
-        self.subject.insert(position, np_subject)
-        
-        return np_subject
-        
-    def add_verb(self, verb, position=None):
-        vp_verb = VerbPhrase.wrap_verb_in_vp(verb)
-        self.verb.append(vp_verb)
-        return vp_verb
-        
-   
-    def set_verb_tense(self, tense):
-        for vp in self.verb:
-            vp.set_tense(tense)
-        
-    def realize(self):
-        return " ".join([self.subject[0].realize(), self.verb[0].realize()]) 
 
