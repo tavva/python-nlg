@@ -36,7 +36,7 @@ class NounTest(unittest.TestCase):
 class VerbTensesTest(unittest.TestCase):
     def setUp(self):
         self.walk = Word("walk", "VERB")
-        self.be = Word("be", "VERB", features = {"present":"is", "presentparticiple":"being", "infinitive":"to be", "past":"was"})
+        self.be = Word("be", "VERB", features = {"present":"is", "presentparticiple":"being", "to-infinitive":"to be", "infinitive":"be", "past":"was"})
         self.welcome = Word("welcome", "VERB")
         self.program = Word("program", "VERB")
         self.worry = Word("worry", "VERB")
@@ -47,12 +47,21 @@ class VerbTensesTest(unittest.TestCase):
     
     def testInfinitive(self):
         morph = pynlg.morphology
-        self.assertEqual("to walk", morph.verb_inf(self.walk))
-        self.assertEqual("to welcome", morph.verb_inf(self.welcome))
-        self.assertEqual("to program", morph.verb_inf(self.program))
-        self.assertEqual("to be", morph.verb_inf(self.be))
-        self.assertEqual("to worry", morph.verb_inf(self.worry))
-        self.assertEqual("to kiss", morph.verb_inf(self.kiss))
+        self.assertEqual("walk", morph.verb_inf(self.walk))
+        self.assertEqual("welcome", morph.verb_inf(self.welcome))
+        self.assertEqual("program", morph.verb_inf(self.program))
+        self.assertEqual("be", morph.verb_inf(self.be))
+        self.assertEqual("worry", morph.verb_inf(self.worry))
+        self.assertEqual("kiss", morph.verb_inf(self.kiss))
+    
+    def testToInfinitive(self):
+        morph = pynlg.morphology
+        self.assertEqual("to walk", morph.verb_to_inf(self.walk))
+        self.assertEqual("to welcome", morph.verb_to_inf(self.welcome))
+        self.assertEqual("to program", morph.verb_to_inf(self.program))
+        self.assertEqual("to be", morph.verb_to_inf(self.be))
+        self.assertEqual("to worry", morph.verb_to_inf(self.worry))
+        self.assertEqual("to kiss", morph.verb_to_inf(self.kiss))
         
     def testPresent(self):
         morph = pynlg.morphology

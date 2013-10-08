@@ -58,17 +58,78 @@ class Clause():
         return " ".join([self.subject[0].realize(), self.verb[0].realize()]) 
 
 
+
+class ImperativeClause():
+    
+    def __init__(self, subject = None, verb = None, object = None,):
+        if subject is None:
+            self.subject = []
+        elif isinstance(subject, NounPhrase):
+            self.subject = [subject]
+        else:
+            self.subject = subject
+        
+        if verb is None:
+            self.verb = []
+        elif isinstance(verb, VerbPhrase):
+            verb.set_tense("infinitive")
+            self.verb = [verb]
+            
+        else:
+            for v in verb:
+                v.set_tense("infinitive")
+            self.verb = verb
+        
+        if object is None:
+            self.object = []
+        elif isinstance(object, NounPhrase):
+            self.object = [object]
+        else:
+            self.object = object
+        
+        
+
+    def add_subject(self, subject, position=None):
+        np_subject = NounPhrase.wrap_noun_in_np(subject)
+        
+        if position is None:
+            position = len(self.subject)
+            
+        self.subject.insert(position, np_subject)
+        
+        return np_subject
+        
+    def add_verb(self, verb, position=None):
+        vp_verb = VerbPhrase.wrap_verb_in_vp(verb)
+        vp_verb.set_tense("infinitive")
+        self.verb.append(vp_verb)
+        return vp_verb
+        
+   
+    def set_verb_tense(self, tense):
+        for vp in self.verb:
+            vp.set_tense(tense)
+        
+    def realize(self):
+        verb = self.verb[0].realize_verb()
+        pp = self.verb[0].realize_pps()
+        
+        if pp != "":
+            return " ".join([verb, self.subject[0].realize(), pp])
+        else:
+            return " ".join([verb, self.subject[0].realize()])
         
         
 
 class NounPhrase():
     
-    def __init__(self, word, determiner = None, adjectives = None, owners = None, prepositional_phrases = None):
+    def __init__(self, word, determiner = None, adjectives = None, owners = None, prepositional_phrases = None, number="singular"):
         self.base_word = word
         self.determiner = determiner
         self.owners = [] if owners == None else owners
         self.adjectives = [] if adjectives == None else adjectives
         self.prepositional_phrases = [] if prepositional_phrases == None else prepositional_phrases
+        self.number = number
         
     def add_determiner(self, determiner):
         if isinstance(determiner, Determiner) or isinstance(determiner, Word):
@@ -113,7 +174,10 @@ class NounPhrase():
         np_object = NounPhrase.wrap_noun_in_np(object)
         self.owners.append(np_object)
         return np_object
-
+    
+    def set_number(self, n):
+        self.number = n
+    
     def realize_possessive(self):
         np = []
         if self.determiner:
@@ -143,8 +207,12 @@ class NounPhrase():
             np.append("and")
             np.append(str(self.adjectives[-1]))
         
+        
+        if(self.number == "plural"):
+            np.append(str(self.base_word.plural))
+        else:    
+            np.append(str(self.base_word))
             
-        np.append(str(self.base_word))
         if len(self.prepositional_phrases) > 0:
             realized_pps = []
             for pp in self.prepositional_phrases:
@@ -177,26 +245,44 @@ class VerbPhrase():
         self.indirect_object = np_object
         return np_object
     
+    def add_prepositional_phrase(self, pp):
+        self.prepositional_phrases.append(pp)
+    
     
     @staticmethod
     def wrap_verb_in_vp(verb):
         return VerbPhrase(verb)
     
+    
+    def realize_indirect_object(self):
+        return self.indirect_object.realize()
+    
+    def realize_direct_object(self):
+        return self.direct_object.realize()
+    
+    def realize_pps(self):
+        
+        realized_pps = []
+        for pp in self.prepositional_phrases:
+            
+            realized_pps.append(pp.realize())
+        return " ".join(realized_pps)
+    
+    def realize_verb(self):
+        return self.verb.tense(self.tense)
+    
     def realize(self):
         vp = []
-        vp.append(self.verb.tense(self.tense))
+        vp.append(self.realize_verb())
         
         if not self.indirect_object is None:
-            vp.append(self.indirect_object.realize())
+            vp.append(self.realize_indirect_object())
         
         if not self.direct_object is None:
-            vp.append(self.direct_object.realize())
+            vp.append(self.realize_direct_object())
+            
         if len(self.prepositional_phrases) > 0:
-            realized_pps = []
-            for pp in self.prepositional_phrases:
-                
-                realized_pps.append(pp.realize())
-            vp.append(" ".join(realized_pps))
+            vp.append(self.realize_pps())
         
         return " ".join(vp)
 

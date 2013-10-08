@@ -20,6 +20,7 @@ def makeInflections(word):
         
     if word.category == "VERB":
         inflections["infinitive"] = verb_inf(word)
+        inflections["to-infinitive"] = verb_to_inf(word)
         inflections["present"] = verb_present(word)
         inflections["past"] = verb_past(word)
         inflections["present_participle"] = verb_present_participle(word)
@@ -48,12 +49,17 @@ def noun_plural(word):
         return base + "s"
     
 
-
+def verb_to_inf(word):
+    if "to-infinitive" in word.features:
+        return word.features["to-infinitive"]
+    else:
+        return "to "+word.base
+    
 def verb_inf(word):
     if "infinitive" in word.features:
         return word.features["infinitive"]
     else:
-        return 'to '+word.base
+        return word.base
 
 def verb_present(word):
     if "present" in word.features:

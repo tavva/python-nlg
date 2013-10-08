@@ -4,7 +4,7 @@ Created on 2013-03-06
 @author: Nich
 '''
 import unittest
-from pynlg.realizer import Clause
+from pynlg.realizer import Clause, ImperativeClause, PrepositionalPhrase, NounPhrase
 from pynlg.lexicon import Word, XMLLexicon, Noun
 
 class TestRealizer(unittest.TestCase):
@@ -41,6 +41,30 @@ class TestRealizer(unittest.TestCase):
         np_woman = vp_give.add_indirect_object(lex.getWord("woman"))
         np_woman.add_determiner(lex.getWord("the"))
         
+        #Test imperative
+        
+        #Make the coffee
+        
+        self.s3 = ImperativeClause()
+        vp_make = self.s3.add_verb(lex.getWord("make", "VERB"))
+        np_the_coffee = self.s3.add_subject(lex.getWord("coffee"))
+        np_the_coffee.add_determiner(lex.getWord("the"))
+        
+        #Put the beans in the machine
+        self.s4 = ImperativeClause()
+        vp_put = self.s4.add_verb(lex.getWord("put", "VERB"))
+        np_the_machine = NounPhrase(lex.getWord("machine", "NOUN"), determiner=lex.getWord("the"))
+        pp_in_the_machine = PrepositionalPhrase(lex.getWord("in", "PREPOSITION"), [np_the_machine])
+        
+        vp_put.add_prepositional_phrase(pp_in_the_machine)
+        
+        
+        np_the_beans = self.s4.add_subject(lex.getWord("bean"))
+        np_the_beans.add_determiner(lex.getWord("the"))
+        np_the_beans.set_number("plural")
+        
+        
+        
         
 
     def tearDown(self):
@@ -51,6 +75,10 @@ class TestRealizer(unittest.TestCase):
         self.assertEqual("the woman kissed the man", self.s1.realize())
         self.assertEqual("the man gives the woman John's flower", self.s2.realize())
         
+        
+    def testImperative(self):
+        self.assertEqual("make the coffee", self.s3.realize())
+        self.assertEqual("put the beans in the machine", self.s4.realize())
 
 
 if __name__ == "__main__":
